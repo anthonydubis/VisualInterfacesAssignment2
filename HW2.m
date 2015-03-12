@@ -21,6 +21,7 @@ for i=1:length(imgFiles)
 end
 
 % Perform comparisons between images
+% Redundant work is done, but it isn't an issue given our input size.
 all_img_cmps = cell(length(hist_vectors), 1);
 for i=1:length(hist_vectors)
     % Compare image i to all other images 
@@ -37,10 +38,23 @@ for i=1:length(hist_vectors)
     all_img_cmps{i} = img_cmps;
 end
         
+% Determine the best and worst matches for each image and print them out
+imgs_to_print = zeros(length(all_img_cmps), 7);
+for i=1:length(all_img_cmps)
+    img_cmps = all_img_cmps{i};
+    num_imgs = length(img_cmps);
+    imgs_to_print(i,1) = i;
+    imgs_to_print(i,2) = img_cmps(num_imgs-1,1);
+    imgs_to_print(i,3) = img_cmps(num_imgs-2,1);
+    imgs_to_print(i,4) = img_cmps(num_imgs-3,1);
+    imgs_to_print(i,5) = img_cmps(3,1);
+    imgs_to_print(i,6) = img_cmps(2,1);
+    imgs_to_print(i,7) = img_cmps(1,1);
+end
+
 % Print results of comparisons
 
 % figure(); hold on;
 % subplot(1,7,1), subimage(imread([imgPath imgFiles(2).name])); axis off;
 % subplot(1,7,2), subimage(imread([imgPath imgFiles(1).name])); axis off;
-
-hold off;
+% hold off;
