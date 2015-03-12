@@ -53,6 +53,18 @@ for i=1:length(all_img_cmps)
 end
 
 % Print results of comparisons
+cols = size(imgs_to_print,2);
+for i=1:length(imgs_to_print)
+    if (mod(i-1,5) == 0) figure(); end
+    
+    for j=1:cols
+        filename = [imgPath imgFiles(imgs_to_print(i,j)).name];
+        img = imread(filename);
+        pos = mod(i-1,5) * cols + j;
+        subplot(5,cols,pos); subimage(img); axis off;
+        title(imgs_to_print(i,j));
+    end
+end
 
 % figure(); hold on;
 % subplot(1,7,1), subimage(imread([imgPath imgFiles(2).name])); axis off;
