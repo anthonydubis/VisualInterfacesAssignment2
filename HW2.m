@@ -20,11 +20,19 @@ for i=1:length(imgFiles)
     hist_vectors{i} = reshape(hist3D, [1 num_segments^3]);
 end
 
+% Perform comparisons between images
 comparisons = zeros(length(hist_vectors), 2);
 for i=1:length(hist_vectors)
     comparisons(i, 1) = i;
     comparisons(i, 2) = colorCompare(hist_vectors{1}, hist_vectors{i});
 end
 
+% Sort comparisons
 [Y, I] = sort(comparisons(:, 2));
 comparisons = comparisons(I, :);
+
+figure(); hold on;
+subplot(1,7,1), subimage(imread([imgPath imgFiles(2).name])); axis off;
+subplot(1,7,2), subimage(imread([imgPath imgFiles(1).name])); axis off;
+
+hold off;
