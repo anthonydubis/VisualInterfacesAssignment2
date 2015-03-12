@@ -21,18 +21,26 @@ for i=1:length(imgFiles)
 end
 
 % Perform comparisons between images
-comparisons = zeros(length(hist_vectors), 2);
+all_img_cmps = cell(length(hist_vectors), 1);
 for i=1:length(hist_vectors)
-    comparisons(i, 1) = i;
-    comparisons(i, 2) = colorCompare(hist_vectors{1}, hist_vectors{i});
+    % Compare image i to all other images 
+    img_cmps = zeros(length(hist_vectors), 2);
+    for j=1:length(hist_vectors)
+        img_cmps(j, 1) = j;
+        img_cmps(j, 2) = colorCompare(hist_vectors{i}, hist_vectors{j});
+    end
+    % Sort comparisons for this image by similarity
+    [Y,I] = sort(img_cmps(:,2));
+    img_cmps = img_cmps(I,:);
+    
+    % Add sorted comparisons for image to all_img_cmps
+    all_img_cmps{i} = img_cmps;
 end
+        
+% Print results of comparisons
 
-% Sort comparisons
-[Y, I] = sort(comparisons(:, 2));
-comparisons = comparisons(I, :);
-
-figure(); hold on;
-subplot(1,7,1), subimage(imread([imgPath imgFiles(2).name])); axis off;
-subplot(1,7,2), subimage(imread([imgPath imgFiles(1).name])); axis off;
+% figure(); hold on;
+% subplot(1,7,1), subimage(imread([imgPath imgFiles(2).name])); axis off;
+% subplot(1,7,2), subimage(imread([imgPath imgFiles(1).name])); axis off;
 
 hold off;
