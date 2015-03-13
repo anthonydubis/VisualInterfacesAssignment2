@@ -78,8 +78,13 @@ for i=1:length(grays)
 end
 
 % Turn Laplacians into histograms
-bins = 200;
-text_hists = cell(length(laplacians), 1);
-for i=1:length(laplacians)
-    text_hists{i} = getNormalizedTextureHistogram(laplacians{i}, bins);
-end
+bins = 100;
+
+fprintf('Before getting normalzied texture hist\n');
+
+t_hist = getNormalizedTextureHistogram(laplacians{27}, bins);
+
+% text_hists = cell(length(laplacians), 1);
+% for i=1:length(laplacians)
+%     text_hists{i} = getNormalizedTextureHistogram(laplacians{i}, bins);
+% end
