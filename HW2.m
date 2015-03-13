@@ -12,13 +12,13 @@ imgFiles     = dir([imgPath imgType]);
 %% Step 1
 % Initialize cells for hist vectors and images
 hist_vectors = cell(length(imgFiles), 1);
-rgbs       = cell(length(imgFiles), 1);
+rgbs         = cell(length(imgFiles), 1);
 
 % Create array of normalized histogram vectors for each image
 for i=1:length(imgFiles)
     % Read the image
     filename = [imgPath imgFiles(i).name];
-    fprintf(imgFiles(i).name); fprintf('\n');
+    % fprintf(imgFiles(i).name); fprintf('\n');
     rgbs{i} = imread(filename);
     
     % Get the vector with normalized bin values
@@ -65,12 +65,21 @@ end
 
 %% Step 2
 
-% Convert images to 16-bit ints using int16(matrix)
-
+% Get gray-scale images
 grays = cell(length(rgbs), 1);
 for i=1:length(rgbs)
     grays{i} = getGrayScale(rgbs{i});
 end
 
-gray = grays{1};
-figure(); imshow(gray);
+% Get Laplacian images
+laplacians = cell(length(grays), 1);
+for i=1:length(grays)
+    laplacians{i} = getLaplacian(int16(grays{i}));
+end
+
+% Turn Laplacians into histograms
+bins = 200;
+text_hists = cell(length(laplacians), 1);
+for i=1:length(laplacians)
+    text_hists{i} = getNormalizedTextureHistogram(laplacians{i}, bins);
+end
