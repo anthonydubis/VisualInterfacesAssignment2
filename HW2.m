@@ -6,17 +6,20 @@ num_segments = 6;
 imgPath      = 'ppm/';
 imgType      = '*.ppm'; % change based on image type
 imgFiles     = dir([imgPath imgType]);
+
+% Initialize cells for hist vectors and images
 hist_vectors = cell(length(imgFiles), 1);
+images       = cell(length(imgFiles), 1);
 
 % Create array of normalized histogram vectors for each image
 for i=1:length(imgFiles)
     % Read the image
     filename = [imgPath imgFiles(i).name];
     fprintf(imgFiles(i).name); fprintf('\n');
-    img = imread(filename);
+    images{i} = imread(filename);
     
     % Get the vector with normalized bin values
-    hist3D = getNormalizedColorHistogram(img, num_segments);
+    hist3D = getNormalizedColorHistogram(images{i}, num_segments);
     hist_vectors{i} = reshape(hist3D, [1 num_segments^3]);
 end
 
@@ -53,20 +56,4 @@ for i=1:length(all_img_cmps)
 end
 
 % Print results of comparisons
-cols = size(imgs_to_print,2);
-for i=1:length(imgs_to_print)
-    if (mod(i-1,5) == 0) figure(); end
-    
-    for j=1:cols
-        filename = [imgPath imgFiles(imgs_to_print(i,j)).name];
-        img = imread(filename);
-        pos = mod(i-1,5) * cols + j;
-        subplot(5,cols,pos); subimage(img); axis off;
-        title(imgs_to_print(i,j));
-    end
-end
-
-% figure(); hold on;
-% subplot(1,7,1), subimage(imread([imgPath imgFiles(2).name])); axis off;
-% subplot(1,7,2), subimage(imread([imgPath imgFiles(1).name])); axis off;
-% hold off;
+printResultsWithImages(imgs_to_print, images);
