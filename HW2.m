@@ -1,3 +1,5 @@
+% debug
+print_images = false;
 
 % Number of segments to divide 255 channel into - bins = segments^3
 num_segments = 6;
@@ -7,19 +9,20 @@ imgPath      = 'ppm/';
 imgType      = '*.ppm'; % change based on image type
 imgFiles     = dir([imgPath imgType]);
 
+%% Step 1
 % Initialize cells for hist vectors and images
 hist_vectors = cell(length(imgFiles), 1);
-images       = cell(length(imgFiles), 1);
+rgbs       = cell(length(imgFiles), 1);
 
 % Create array of normalized histogram vectors for each image
 for i=1:length(imgFiles)
     % Read the image
     filename = [imgPath imgFiles(i).name];
     fprintf(imgFiles(i).name); fprintf('\n');
-    images{i} = imread(filename);
+    rgbs{i} = imread(filename);
     
     % Get the vector with normalized bin values
-    hist3D = getNormalizedColorHistogram(images{i}, num_segments);
+    hist3D = getNormalizedColorHistogram(rgbs{i}, num_segments);
     hist_vectors{i} = reshape(hist3D, [1 num_segments^3]);
 end
 
@@ -56,4 +59,18 @@ for i=1:length(all_img_cmps)
 end
 
 % Print results of comparisons
-printResultsWithImages(imgs_to_print, images);
+if print_images
+    printResultsWithImages(imgs_to_print, rgbs);
+end
+
+%% Step 2
+
+% Convert images to 16-bit ints using int16(matrix)
+
+grays = cell(length(rgbs), 1);
+for i=1:length(rgbs)
+    grays{i} = getGrayScale(rgbs{i});
+end
+
+gray = grays{1};
+figure(); imshow(gray);
