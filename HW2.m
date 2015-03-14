@@ -1,3 +1,5 @@
+%% Step 0
+
 % debug
 print_color_results = true;
 print_texture_results = false;
@@ -9,35 +11,35 @@ num_segments = 6;
 imgPath      = 'ppm/';
 imgType      = '*.ppm'; % change based on image type
 imgFiles     = dir([imgPath imgType]);
+rgbs         = cell(length(imgFiles), 1);
+N            = length(imgFiles);
+
+% Load images
+for i=1:N
+    filename = [imgPath imgFiles(i).name];
+    rgbs{i} = imread(filename);
+end
 
 %% Step 1
-% Initialize cells for hist vectors and images
-hist_vectors = cell(length(imgFiles), 1);
-rgbs         = cell(length(imgFiles), 1);
 
 % Create array of normalized histogram vectors for each image
-for i=1:length(imgFiles)
-    % Read the image
-    filename = [imgPath imgFiles(i).name];
-    % fprintf(imgFiles(i).name); fprintf('\n');
-    rgbs{i} = imread(filename);
-    
-    % Get the vector with normalized bin values
+color_hists = zeros(N, num_segments^3);
+for i=1:N
     hist3D = getNormalizedColorHistogram(rgbs{i}, num_segments);
-    hist_vectors{i} = reshape(hist3D, [1 num_segments^3]);
+    color_hists(i,:) = reshape(hist3D, [1 num_segments^3]);
 end
 
 % Perform comparisons between images
-% Redundant work is done, but it isn't an issue given our input size.
-color_cmps = zeros(length(hist_vectors), length(hist_vectors));
-for i=1:length(hist_vectors)
-    for j=(i):length(hist_vectors)
-        comp = colorCompare(hist_vectors{i}, hist_vectors{j});
+color_cmps = zeros(N,N);
+for i=1:N
+    for j=(i):N
+        comp = colorCompare(color_hists(i,:), color_hists(j,:));
         color_cmps(i,j) = comp;
         color_cmps(j,i) = comp;
     end
 end
 
+% Gets results with image names as specified by assignment (40 x 7)
 color_match_results = getSimilarityResults(color_cmps);
 
 % Print results of comparisons
