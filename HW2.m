@@ -1,8 +1,8 @@
 %% Step 0
 
 % debug
-print_color_results = true;
-print_texture_results = false;
+print_color_results = false;
+print_texture_results = true;
 
 % Number of segments to divide 255 channel into - bins = segments^3
 num_segments = 6;
@@ -33,7 +33,7 @@ end
 color_cmps = zeros(N,N);
 for i=1:N
     for j=(i):N
-        comp = colorCompare(color_hists(i,:), color_hists(j,:));
+        comp = l1Compare(color_hists(i,:), color_hists(j,:));
         color_cmps(i,j) = comp;
         color_cmps(j,i) = comp;
     end
@@ -47,71 +47,46 @@ if print_color_results
     printResultsWithImages(color_match_results, rgbs);
 end
 
-% %% Step 2
-% 
-% % Get gray-scale images
-% grays = cell(length(rgbs), 1);
-% for i=1:length(rgbs)
-%     grays{i} = getGrayScale(rgbs{i});
-% end
-% 
-% fprintf('About to get laplacians\n');
-% % THIS IS VERY CLEARLY A BOTTLENECK
-% % Get Laplacian images
-% laplacians = cell(length(grays), 1);
-% for i=1:length(grays)
-%     laplacians{i} = getLaplacian(int16(grays{i}));
-% end
-% fprintf('Finished getting laplacians\n');
-% 
-% fprintf('About to get textured histograms\n');
-% % Turn Laplacians into histograms
-% bins = 100;
-% text_hists = cell(length(laplacians), 1);
-% for i=1:length(laplacians)
-%     text_hists{i} = getNormalizedTextureHistogram(laplacians{i}, bins);
-% end
-% fprintf('Finished getting textured histograms\n');
-% 
-% fprintf('About to do texture comparisons\n');
-% % Perform comparisons between images
-% % Redundant work is done, but it isn't an issue given our input size.
-% all_text_cmps = cell(length(text_hists), 1);
-% for i=1:length(text_hists)
-%     % Compare image i to all other images 
-%     text_cmps = zeros(length(text_hists), 2);
-%     for j=1:length(text_hists)
-%         text_cmps(j, 1) = j;
-%         text_cmps(j, 2) = colorCompare(text_hists{i}, text_hists{j});
-%     end
-%     % Sort comparisons for this image by similarity
-%     [Y,I] = sort(text_cmps(:,2));
-%     text_cmps = text_cmps(I,:);
-%     
-%     % Add sorted comparisons for image to all_img_cmps
-%     all_text_cmps{i} = text_cmps;
-% end
-% 
-% image_one_text_cmps = all_text_cmps{1};
-% 
-% % Determine the best and worst matches for each image and print them out
-% texture_prints = zeros(length(all_img_cmps), 7);
-% for i=1:length(all_img_cmps)
-%     text_cmps = all_text_cmps{i};
-%     num_imgs = length(text_cmps);
-%     texture_prints(i,1) = i;
-%     texture_prints(i,2) = text_cmps(num_imgs-1,1);
-%     texture_prints(i,3) = text_cmps(num_imgs-2,1);
-%     texture_prints(i,4) = text_cmps(num_imgs-3,1);
-%     texture_prints(i,5) = text_cmps(3,1);
-%     texture_prints(i,6) = text_cmps(2,1);
-%     texture_prints(i,7) = text_cmps(1,1);
-% end
-% 
-% % Print results of comparisons
-% if print_texture_results
-%     printResultsWithImages(texture_prints, rgbs);
-% end
+%% Step 2
+
+% Get gray-scale images
+grays = cell(N, 1);
+for i=1:N
+    grays{i} = getGrayScale(rgbs{i});
+end
+
+% BOTTLENECK
+% Get Laplacian images
+laplacians = cell(N, 1);
+for i=1:N
+    laplacians{i} = getLaplacian(int16(grays{i}));
+end
+
+% Turn Laplacians into histograms
+bins = 100;
+text_hists = zeros(N, bins);
+for i=1:N
+    text_hists(i,:) = getNormalizedTextureHistogram(laplacians{i}, bins);
+end
+
+% Perform texture comparisons between images
+texture_cmps = zeros(N,N);
+for i=1:N
+    for j=(i):N
+        comp = l1Compare(text_hists(i,:), text_hists(j,:));
+        texture_cmps(i,j) = comp;
+        texture_cmps(j,i) = comp;
+    end
+end
+
+% Gets results with image names as specified by assignment (40 x 7)
+texture_match_results = getSimilarityResults(texture_cmps);
+
+% Print results of comparisons
+if print_texture_results
+    printResultsWithImages(texture_match_results, rgbs);
+end
+
 % 
 % %{
 % An issue that still needs to be overcome is discovering the most similar
