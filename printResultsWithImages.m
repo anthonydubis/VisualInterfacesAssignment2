@@ -4,8 +4,8 @@ This function prints the results using the provided images. It formats the
 prints to have five rows and the same number of columns as results.
 %}
 
-cols = size(results,2);
-for i=1:length(results)
+[rows, cols] = size(results);
+for i=1:rows
     if (mod(i-1,5) == 0) figure(); end
     
     for j=1:cols

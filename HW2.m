@@ -2,7 +2,7 @@
 
 % debug
 print_color_results = false;
-print_texture_results = true;
+print_texture_results = false;
 
 % Number of segments to divide 255 channel into - bins = segments^3
 num_segments = 6;
@@ -47,6 +47,11 @@ if print_color_results
     printResultsWithImages(color_match_results, rgbs);
 end
 
+% Get/print the four most similar and dissimilar based on color
+color_most_similar = getSimilarityGroup(color_cmps, Opts.Similar);
+color_most_dissimilar = getSimilarityGroup(color_cmps, Opts.Dissimilar);
+printResultsWithImages([color_most_similar; color_most_dissimilar], rgbs);
+
 %% Step 2
 
 % Get gray-scale images
@@ -86,6 +91,11 @@ texture_match_results = getSimilarityResults(texture_cmps);
 if print_texture_results
     printResultsWithImages(texture_match_results, rgbs);
 end
+
+% Get/print the four most similar and dissimilar based on texture
+text_most_similar = getSimilarityGroup(texture_cmps, Opts.Similar);
+text_most_dissimilar = getSimilarityGroup(texture_cmps, Opts.Dissimilar);
+printResultsWithImages([text_most_similar; text_most_dissimilar], rgbs);
 
 % 
 % %{
