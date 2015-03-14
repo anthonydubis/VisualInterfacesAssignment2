@@ -4,7 +4,7 @@ function [ result, max_val ] = getLaplacian( gray )
 
 sz = size(gray);
 result = zeros(sz);
-threshold = 45;
+threshold = 30;
 max_val = 0;
 
 for i=1:sz(1)

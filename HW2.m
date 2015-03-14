@@ -2,7 +2,7 @@
 
 % debug
 print_color_results = false;
-print_texture_results = false;
+print_texture_results = true;
 
 % Number of segments to divide 255 channel into - bins = segments^3
 num_segments = 6;
@@ -69,7 +69,7 @@ for i=1:N
 end
 
 % Turn Laplacians into histograms
-bins = 500;
+bins = 200;
 text_hists = zeros(N, bins);
 for i=1:N
     text_hists(i,:) = getNormalizedTextureHistogram(laplacians{i}, ... 
@@ -103,27 +103,3 @@ end
 text_most_similar = getSimilarityGroup(texture_cmps, Opts.Similar);
 text_most_dissimilar = getSimilarityGroup(texture_cmps, Opts.Dissimilar);
 printResultsWithImages([text_most_similar; text_most_dissimilar], rgbs);
-
-% 
-% %{
-% An issue that still needs to be overcome is discovering the most similar
-% and least similar for both the color and texture classifiers. 
-% 
-% What's the brute force solution? Create all possible groups of 4. Calculate
-% the similarity values between each pair in the group and sum them up. We
-% should be able to use our results from earlier comparisons to fill in these
-% values (rather than recomputing them). 
-% 
-% There's an issue here. Suppose through images are highly similar (.9, .8,
-% .85 values between the three), but the closest image to these is .2 in
-% similarity for all of the comparisons.  However, imagine another group of
-% images where the similarity values are .6, .7, .65, .55.  This group seems
-% to make more sense because there is clearly an "odd man out" in the former.
-% 
-% So, instead of taking the group with the highest total similarity values,
-% perhaps take the one with the lowest minimum value.
-% 
-% As for the most unlike group, we could use the converse of these.  Either
-% the group with the lowest total similarity score, or the group with the
-% lowest max.
-% %}

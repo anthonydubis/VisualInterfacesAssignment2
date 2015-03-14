@@ -8,7 +8,6 @@ bins      = number of bins
 hist      = the normalized texture histogram 
 %}
 
-laplacian = abs(laplacian);
 sz        = size(laplacian);
 hist      = zeros(1, bins);
 total     = 0;
