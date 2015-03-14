@@ -20,37 +20,37 @@ for i=1:N
     rgbs{i} = imread(filename);
 end
 
-%% Step 1
-
-% Create array of normalized histogram vectors for each image
-color_hists = zeros(N, num_segments^3);
-for i=1:N
-    hist3D = getNormalizedColorHistogram(rgbs{i}, num_segments);
-    color_hists(i,:) = reshape(hist3D, [1 num_segments^3]);
-end
-
-% Perform comparisons between images
-color_cmps = zeros(N,N);
-for i=1:N
-    for j=(i):N
-        comp = l1Compare(color_hists(i,:), color_hists(j,:));
-        color_cmps(i,j) = comp;
-        color_cmps(j,i) = comp;
-    end
-end
-
-% Gets results with image names as specified by assignment (40 x 7)
-color_match_results = getSimilarityResults(color_cmps);
-
-% Print results of comparisons
-if print_color_results
-    printResultsWithImages(color_match_results, rgbs);
-end
-
-% Get/print the four most similar and dissimilar based on color
-color_most_similar = getSimilarityGroup(color_cmps, Opts.Similar);
-color_most_dissimilar = getSimilarityGroup(color_cmps, Opts.Dissimilar);
-printResultsWithImages([color_most_similar; color_most_dissimilar], rgbs);
+% %% Step 1
+% 
+% % Create array of normalized histogram vectors for each image
+% color_hists = zeros(N, num_segments^3);
+% for i=1:N
+%     hist3D = getNormalizedColorHistogram(rgbs{i}, num_segments);
+%     color_hists(i,:) = reshape(hist3D, [1 num_segments^3]);
+% end
+% 
+% % Perform comparisons between images
+% color_cmps = zeros(N,N);
+% for i=1:N
+%     for j=(i):N
+%         comp = l1Compare(color_hists(i,:), color_hists(j,:));
+%         color_cmps(i,j) = comp;
+%         color_cmps(j,i) = comp;
+%     end
+% end
+% 
+% % Gets results with image names as specified by assignment (40 x 7)
+% color_match_results = getSimilarityResults(color_cmps);
+% 
+% % Print results of comparisons
+% if print_color_results
+%     printResultsWithImages(color_match_results, rgbs);
+% end
+% 
+% % Get/print the four most similar and dissimilar based on color
+% color_most_similar = getSimilarityGroup(color_cmps, Opts.Similar);
+% color_most_dissimilar = getSimilarityGroup(color_cmps, Opts.Dissimilar);
+% printResultsWithImages([color_most_similar; color_most_dissimilar], rgbs);
 
 %% Step 2
 
@@ -60,19 +60,26 @@ for i=1:N
     grays{i} = getGrayScale(rgbs{i});
 end
 
-% BOTTLENECK
 % Get Laplacian images
 laplacians = cell(N, 1);
+max_l = 0;
 for i=1:N
-    laplacians{i} = getLaplacian(int16(grays{i}));
+    [laplacians{i}, max_val] = getLaplacian(grays{i});
+    max_l = max(max_l, max_val);
 end
 
 % Turn Laplacians into histograms
-bins = 100;
+bins = 500;
 text_hists = zeros(N, bins);
 for i=1:N
-    text_hists(i,:) = getNormalizedTextureHistogram(laplacians{i}, bins);
+    text_hists(i,:) = getNormalizedTextureHistogram(laplacians{i}, ... 
+        bins, max_l);
 end
+
+% figure(); imshow(rgbs{1});
+img1_gray = grays{1};
+img1_lapl = laplacians{1};
+img1_hist = text_hists(1,:);
 
 % Perform texture comparisons between images
 texture_cmps = zeros(N,N);

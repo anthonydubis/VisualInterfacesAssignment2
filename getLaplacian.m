@@ -1,23 +1,24 @@
-function [ result ] = getLaplacian( gray )
+function [ result, max_val ] = getLaplacian( gray )
 % This function takes in a grayscale image and returns its Laplacian
 % Background pixels (grayscale < thresh) are assigned 0 as their value
 
-sz     = size(gray);
+sz = size(gray);
 result = zeros(sz);
-threshold = 25;
+threshold = 45;
+max_val = 0;
 
 for i=1:sz(1)
     for j=1:sz(2)
         if gray(i,j) < threshold
-            result(i,j) = 0;
+            result(i,j) = -1;
             continue;
         else
-            result(i,j) = getValue(gray, i, j);
+            val = getValue(gray, i, j);
+            result(i,j) = val;
+            max_val = max(max_val, val);
         end
     end
 end
-
-% Normalize here?
 
 end
 
@@ -38,5 +39,6 @@ for i=(row-1):(row+1)
 end
 
 val = val + (gray(row,col) * n_neighbors);
+val = abs(val);
 end
 

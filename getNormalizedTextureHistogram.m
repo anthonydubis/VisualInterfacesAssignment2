@@ -1,4 +1,4 @@
-function [ hist ] = getNormalizedTextureHistogram( laplacian, bins )
+function [ hist ] = getNormalizedTextureHistogram( laplacian, bins, max )
 %{
 This function will return the normalized texture histogram for a given
 laplacian image. 
@@ -12,16 +12,19 @@ laplacian = abs(laplacian);
 sz        = size(laplacian);
 hist      = zeros(1, bins);
 total     = 0;
-max_val   = 255*8;
-bin_range = max_val / bins;
+bin_range = max / bins;
 
 for i=1:sz(1)
     for j=1:sz(2)
         val = laplacian(i,j);
-        if val ~= 0
+        if val ~= -1
             total = total + 1;
-            bin = ceil(val / bin_range);
-            hist(bin) = hist(bin) + 1;
+            if (val == 0)
+                hist(1) = hist(1) + 1;
+            else
+                bin = ceil(val / bin_range);
+                hist(bin) = hist(bin) + 1;
+            end
         end
     end
 end
