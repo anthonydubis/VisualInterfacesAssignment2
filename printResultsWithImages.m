@@ -9,6 +9,9 @@ for i=1:rows
     if (mod(i-1,5) == 0) figure(); end
     
     for j=1:cols
+        if results(i,j) == 0
+            continue;
+        end;
         img = images{results(i,j)};
         pos = mod(i-1,5) * cols + j;
         subplot(5,cols,pos); subimage(img); axis off;
