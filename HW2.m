@@ -1,10 +1,10 @@
-clc; close all;
+clc; clear; close all;
 
 %% Step 0
 
 % debug
 print_color_results = false;
-print_texture_results = false;
+print_texture_results = true;
 
 % Number of segments to divide 255 channel into - bins = segments^3
 num_segments = 6;
@@ -111,23 +111,32 @@ end
 %% Step 3
 % Use MATLAB's Agglomerative Hierarchical Cluster Tree functionality
 
-% Determine pairwise distances
-r = 0.8;
-S = r * color_cmps + (1.0 - r) * texture_cmps;
-D = 1 - S;
-n_clusters = 7;
+% % Determine pairwise distances
+% r = 1.0;
+% S = r * color_cmps + (1.0 - r) * texture_cmps;
+% D = 1 - S;
+% n_clusters = 7;
 
-% Group the data using linkage
-Z = linkage(D,'complete');
-c = cluster(Z,'maxclust',n_clusters);
-for i=1:n_clusters
-    mat = vec2mat(find(c == i), 7);
-    printResultsWithImages(mat, rgbs);
-end
+% % OPTION 1: Matlab Functions
+% % Group the data using linkage
+% Z = linkage(D,'complete');
+% c = cluster(Z,'maxclust',n_clusters);
+% for i=1:n_clusters
+%     mat = vec2mat(find(c == i), 7);
+%     printResultsWithImages(mat, rgbs);
+% end
 
-Y = linkage(D,'single');
-b = cluster(Y,'maxclust',n_clusters);
-for i=1:n_clusters
-    mat = vec2mat(find(b == i), 7);
-    printResultsWithImages(mat, rgbs);
-end
+% Y = linkage(D,'single');
+% b = cluster(Y,'maxclust',n_clusters);
+% for i=1:n_clusters
+%     mat = vec2mat(find(b == i), 7);
+%     printResultsWithImages(mat, rgbs);
+% end
+
+% % OPTION 2: Self-made clustering algorithm
+% clustering = clusterSimilarities(D, n_clusters, Opts.Complete);
+% for i=1:length(clustering)
+%     mat = vec2mat(clustering{i},7);
+%     printResultsWithImages(mat, rgbs);
+% end
+
