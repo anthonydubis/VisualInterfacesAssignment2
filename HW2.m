@@ -3,7 +3,7 @@ clc; clear; close all;
 %% Step 0
 
 % debug
-print_color_results = false;
+print_color_results = true;
 print_texture_results = false;
 print_user_input = false;
 
@@ -44,6 +44,7 @@ end
 
 % Gets results with image names as specified by assignment (40 x 7)
 color_match_results = getSimilarityResults(color_cmps);
+
 % Get the four most similar and dissimilar based on color
 color_most_similar = getSimilarityGroup(color_cmps, Opts.Similar);
 color_most_dissimilar = getSimilarityGroup(color_cmps, Opts.Dissimilar);

@@ -41,7 +41,6 @@ score = 0;
 N = length(imgs);
 for i=1:(N-1)
     for j=(i+1):N
-        % score = min(score, cmps(imgs(i),imgs(j)));
         score = score + cmps(imgs(i),imgs(j));
     end
 end
