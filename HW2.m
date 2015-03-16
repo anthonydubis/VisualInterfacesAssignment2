@@ -113,28 +113,23 @@ S = r * color_cmps + (1.0 - r) * texture_cmps;
 D = 1 - S;
 n_clusters = 7;
 
-% % OPTION 1: Matlab Functions
-% % Group the data using linkage
-% Z = linkage(D,'complete');
-% c = cluster(Z,'maxclust',n_clusters);
-% for i=1:n_clusters
-%     mat = vec2mat(find(c == i), 7);
-%     printResultsWithImages(mat, rgbs);
-% end
-
-% Y = linkage(D,'single');
-% b = cluster(Y,'maxclust',n_clusters);
-% for i=1:n_clusters
-%     mat = vec2mat(find(b == i), 7);
-%     printResultsWithImages(mat, rgbs);
-% end
+% OPTION 1: Matlab Functions
+% Group the data using linkage
+Z = linkage(D,'complete');
+c1 = cluster(Z,'maxclust',n_clusters);
+for i=1:n_clusters
+    mat = vec2mat(find(c1 == i), 7);
+    printResultsWithImages(mat, rgbs);
+end
 
 % % OPTION 2: Self-made clustering algorithm
-% clustering = clusterSimilarities(D, n_clusters, Opts.Complete);
-% for i=1:length(clustering)
-%     mat = vec2mat(clustering{i},7);
+% c2 = clusterSimilarities(D, n_clusters, Opts.Complete);
+% for i=1:length(c2)
+%     mat = vec2mat(find(c2 == i),7);
 %     printResultsWithImages(mat, rgbs);
 % end
+
+% randIndex = getRandIndex(N, c1, c2);
 
 %% Step 4
 
@@ -149,7 +144,6 @@ surveys{1} = csvread('data/SurveyOne.csv');
 surveys{2} = csvread('data/SurveyTwo.csv');
 surveys{3} = csvread('data/SurveyThree.csv');
 surveys{4} = csvread('data/SurveyFour.csv');
-
 
 % Print images
 if print_user_input

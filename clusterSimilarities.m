@@ -1,4 +1,4 @@
-function [ clusters ] = clusterSimilarities( D, num_clust, option )
+function [ result ] = clusterSimilarities( D, num_clust, option )
 % D = distance matrix (N x N)
 % num_clust = the desired number of clusters
 % clustering = cluster labels for each index (N) of D
@@ -47,6 +47,8 @@ while length(clusters) > num_clust
     c_compares(:,c2) = [];
 end
 
+result = mapClusterArray(clusters, N);
+
 end
 
 function distance = getDist(D, c1, c2, option)
@@ -67,4 +69,16 @@ for i=1:n1
         end
     end
 end
+end
+
+function map = mapClusterArray(cluster, N)
+map = zeros(N,1);
+
+for i=1:length(cluster)
+    mat = cluster{i};
+    for j=1:length(mat)
+        map(mat(j)) = i;
+    end
+end
+
 end
