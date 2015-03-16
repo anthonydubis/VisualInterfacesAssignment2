@@ -108,28 +108,28 @@ end
 % Use MATLAB's Agglomerative Hierarchical Cluster Tree functionality
 
 % Determine pairwise distances
-r = 1.0;
-S = r * color_cmps + (1.0 - r) * texture_cmps;
+r = 0.1;
+S = r * texture_cmps + (1.0 - r) * color_cmps;
 D = 1 - S;
 n_clusters = 7;
 
 % OPTION 1: Matlab Functions
 % Group the data using linkage
 Z = linkage(D,'complete');
-c1 = cluster(Z,'maxclust',n_clusters);
-for i=1:n_clusters
-    mat = vec2mat(find(c1 == i), 7);
-    printResultsWithImages(mat, rgbs);
-end
-
-% % OPTION 2: Self-made clustering algorithm
-% c2 = clusterSimilarities(D, n_clusters, Opts.Complete);
-% for i=1:length(c2)
-%     mat = vec2mat(find(c2 == i),7);
+sys_c = cluster(Z,'maxclust',n_clusters);
+% for i=1:n_clusters
+%     mat = vec2mat(find(sys_c == i), 7);
 %     printResultsWithImages(mat, rgbs);
 % end
 
-% randIndex = getRandIndex(N, c1, c2);
+% % OPTION 2: Self-made clustering algorithm
+% sys_c = clusterSimilarities(D, n_clusters, Opts.Complete);
+% for i=1:length(sys_c)
+%     mat = vec2mat(find(sys_c == i),7);
+%     printResultsWithImages(mat, rgbs);
+% end
+
+% randIndex = getRandIndex(c1, c2);
 
 %% Step 4
 
@@ -159,4 +159,14 @@ for i=1:n_users
     scores(i,3) = getScore(texture_match_results(:,2:7), submitted(:,4:5));
 end
 
+% Load clustering data for third step
+clusters = cell(n_users,1);
+clusters{1} = csvread('data/ClusterOne.csv');
+clusters{2} = csvread('data/ClusterTwo.csv');
+clusters{3} = csvread('data/ClusterThree.csv');
+clusters{4} = csvread('data/ClusterFour.csv');
 
+for i=1:n_users
+    cluster = clusters{i};
+    scores(i,4) = getRandIndex(sys_c, cluster(:,2));
+end
