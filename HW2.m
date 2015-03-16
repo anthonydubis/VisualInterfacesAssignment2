@@ -4,10 +4,8 @@ clc; clear; close all;
 
 % debug
 print_color_results = false;
-print_texture_results = true;
-
-% Number of segments to divide 255 channel into - bins = segments^3
-num_segments = 6;
+print_texture_results = false;
+print_user_input = false;
 
 % Get the image filenames
 imgPath      = 'ppm/';
@@ -23,6 +21,9 @@ for i=1:N
 end
 
 %% Step 1
+
+% Number of segments to divide 255 channel into; bins = segments^3
+num_segments = 7;
 
 % Create array of normalized histogram vectors for each image
 color_hists = zeros(N, num_segments^3);
@@ -72,17 +73,12 @@ for i=1:N
 end
 
 % Turn Laplacians into histograms
-bins = 200;
+bins = 425;
 text_hists = zeros(N, bins);
 for i=1:N
     text_hists(i,:) = getNormalizedTextureHistogram(laplacians{i}, ... 
         bins, max_l);
 end
-
-% figure(); imshow(rgbs{1});
-img1_gray = grays{1};
-img1_lapl = laplacians{1};
-img1_hist = text_hists(1,:);
 
 % Perform texture comparisons between images
 texture_cmps = zeros(N,N);
@@ -111,11 +107,11 @@ end
 %% Step 3
 % Use MATLAB's Agglomerative Hierarchical Cluster Tree functionality
 
-% % Determine pairwise distances
-% r = 1.0;
-% S = r * color_cmps + (1.0 - r) * texture_cmps;
-% D = 1 - S;
-% n_clusters = 7;
+% Determine pairwise distances
+r = 1.0;
+S = r * color_cmps + (1.0 - r) * texture_cmps;
+D = 1 - S;
+n_clusters = 7;
 
 % % OPTION 1: Matlab Functions
 % % Group the data using linkage
@@ -139,4 +135,34 @@ end
 %     mat = vec2mat(clustering{i},7);
 %     printResultsWithImages(mat, rgbs);
 % end
+
+%% Step 4
+
+n_users = 4;
+
+% Initialize scores array for three users [usr colors textures clusters]
+scores = [1 0 0 0; 2 0 0 0; 3 0 0 0; 4 0 0 0];
+
+% Load user surveys for first two steps
+surveys = cell(n_users,1);
+surveys{1} = csvread('data/SurveyOne.csv');
+surveys{2} = csvread('data/SurveyTwo.csv');
+surveys{3} = csvread('data/SurveyThree.csv');
+surveys{4} = csvread('data/SurveyFour.csv');
+
+
+% Print images
+if print_user_input
+    for i=1:n_users
+        printResultsWithImages(surveys{i}, rgbs);
+    end
+end
+
+% Get survey scores
+for i=1:n_users
+    submitted = surveys{i};
+    scores(i,2) = getScore(color_match_results(:,2:7), submitted(:,2:3));
+    scores(i,3) = getScore(texture_match_results(:,2:7), submitted(:,4:5));
+end
+
 

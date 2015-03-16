@@ -20,7 +20,7 @@ for i=1:img_size(1)
         bs = max(ceil(img(i, j, 3) / sgmt_len), 1);
         
         % Ignore pixels that are almost completely black - the "first" bin
-        if rs ~= 1 || gs ~= 1 || bs ~= 1
+        if rs > 1 || gs > 1 || bs > 1
             hist(rs, gs, bs) = hist(rs, gs, bs) + 1;
             sig_pixels = sig_pixels + 1;
         end
