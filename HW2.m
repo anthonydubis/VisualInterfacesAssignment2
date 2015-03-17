@@ -109,7 +109,7 @@ end
 % Cluster the images using Complete and Single Links
 
 % Determine pairwise distances
-r = 0.0;
+r = 0.2;
 S = r * texture_cmps + (1.0 - r) * color_cmps;
 D = 1 - S;
 n_clusters = 7;
@@ -124,11 +124,11 @@ n_clusters = 7;
 % end
 
 % OPTION 2: Self-made clustering algorithm
-sys_c = clusterSimilarities(D, n_clusters, Opts.Single);
-% for i=1:length(sys_c)
-%     mat = vec2mat(find(sys_c == i),7);
-%     printResultsWithImages(mat, rgbs);
-% end
+sys_c = clusterSimilarities(D, n_clusters, Opts.Complete);
+for i=1:length(sys_c)
+    mat = vec2mat(find(sys_c == i),7);
+    printResultsWithImages(mat, rgbs);
+end
 
 %% Step 4
 
@@ -166,7 +166,7 @@ clusters{3} = csvread('data/ClusterThree.csv');
 clusters{4} = csvread('data/ClusterFour.csv');
 
 if print_user_input
-    for i=4:4
+    for i=1:n_users
         cluster = clusters{i}(:,2);
         for j=1:n_clusters
             mat = vec2mat(find(cluster == j), 7);
