@@ -4,8 +4,8 @@ clc; clear; close all;
 
 % debug
 print_color_results = false;
-print_texture_results = true;
-print_user_input = false;
+print_texture_results = false;
+print_user_input = true;
 
 % Get the image filenames
 imgPath      = 'ppm/';
@@ -106,25 +106,25 @@ end
 
 
 %% Step 3
-% Use MATLAB's Agglomerative Hierarchical Cluster Tree functionality
+% Cluster the images using Complete and Single Links
 
 % Determine pairwise distances
-r = 0.1;
+r = 1.0;
 S = r * texture_cmps + (1.0 - r) * color_cmps;
 D = 1 - S;
 n_clusters = 7;
 
-% OPTION 1: Matlab Functions
-% Group the data using linkage
-Z = linkage(D,'complete');
-sys_c = cluster(Z,'maxclust',n_clusters);
+% % OPTION 1: % Use MATLAB's Agglomerative Hierarchical Cluster Tree funcs
+% % Group the data using linkage
+% Z = linkage(D,'single');
+% sys_c = cluster(Z,'maxclust',n_clusters);
 % for i=1:n_clusters
 %     mat = vec2mat(find(sys_c == i), 7);
 %     printResultsWithImages(mat, rgbs);
 % end
 
-% % OPTION 2: Self-made clustering algorithm
-% sys_c = clusterSimilarities(D, n_clusters, Opts.Complete);
+% OPTION 2: Self-made clustering algorithm
+sys_c = clusterSimilarities(D, n_clusters, Opts.Complete);
 % for i=1:length(sys_c)
 %     mat = vec2mat(find(sys_c == i),7);
 %     printResultsWithImages(mat, rgbs);
@@ -148,7 +148,7 @@ surveys{4} = csvread('data/SurveyFour.csv');
 
 % Print images
 if print_user_input
-    for i=1:n_users
+    for i=3:3
         printResultsWithImages(surveys{i}, rgbs);
     end
 end
