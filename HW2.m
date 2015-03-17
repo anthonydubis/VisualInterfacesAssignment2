@@ -3,8 +3,8 @@ clc; clear; close all;
 %% Step 0
 
 % debug
-print_color_results = true;
-print_texture_results = false;
+print_color_results = false;
+print_texture_results = true;
 print_user_input = false;
 
 % Get the image filenames
@@ -74,7 +74,7 @@ for i=1:N
 end
 
 % Turn Laplacians into histograms
-bins = 425;
+bins = 350;
 text_hists = zeros(N, bins);
 for i=1:N
     text_hists(i,:) = getNormalizedTextureHistogram(laplacians{i}, ... 
