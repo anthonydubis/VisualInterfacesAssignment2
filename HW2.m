@@ -5,7 +5,7 @@ clc; clear; close all;
 % debug
 print_color_results = false;
 print_texture_results = false;
-print_user_input = true;
+print_user_input = false;
 
 % Get the image filenames
 imgPath      = 'ppm/';
@@ -109,14 +109,14 @@ end
 % Cluster the images using Complete and Single Links
 
 % Determine pairwise distances
-r = 1.0;
+r = 0.0;
 S = r * texture_cmps + (1.0 - r) * color_cmps;
 D = 1 - S;
 n_clusters = 7;
 
-% % OPTION 1: % Use MATLAB's Agglomerative Hierarchical Cluster Tree funcs
-% % Group the data using linkage
-% Z = linkage(D,'single');
+% OPTION 1: % Use MATLAB's Agglomerative Hierarchical Cluster Tree funcs
+% Group the data using linkage
+% Z = linkage(D,'complete');
 % sys_c = cluster(Z,'maxclust',n_clusters);
 % for i=1:n_clusters
 %     mat = vec2mat(find(sys_c == i), 7);
@@ -124,20 +124,18 @@ n_clusters = 7;
 % end
 
 % OPTION 2: Self-made clustering algorithm
-sys_c = clusterSimilarities(D, n_clusters, Opts.Complete);
+sys_c = clusterSimilarities(D, n_clusters, Opts.Single);
 % for i=1:length(sys_c)
 %     mat = vec2mat(find(sys_c == i),7);
 %     printResultsWithImages(mat, rgbs);
 % end
-
-% randIndex = getRandIndex(c1, c2);
 
 %% Step 4
 
 n_users = 4;
 
 % Initialize scores array for three users [usr colors textures clusters]
-scores = [1 0 0 0; 2 0 0 0; 3 0 0 0; 4 0 0 0];
+scores = [1 0 0 0 0 0; 2 0 0 0 0 0; 3 0 0 0 0 0; 4 0 0 0 0 0];
 
 % Load user surveys for first two steps
 surveys = cell(n_users,1);
@@ -147,17 +145,17 @@ surveys{3} = csvread('data/SurveyThree.csv');
 surveys{4} = csvread('data/SurveyFour.csv');
 
 % Print images
-% if print_user_input
-%     for i=1:n_users
-%         printResultsWithImages(surveys{i}, rgbs);
-%     end
-% end
+if print_user_input
+    for i=1:n_users
+        printResultsWithImages(surveys{i}, rgbs);
+    end
+end
 
 % Get survey scores
 for i=1:n_users
     submitted = surveys{i};
-    scores(i,2) = getScore(color_match_results(:,2:7), submitted(:,2:3));
-    scores(i,3) = getScore(texture_match_results(:,2:7), submitted(:,4:5));
+    scores(i,2:3) = getScore(color_match_results(:,2:7), submitted(:,2:3));
+    scores(i,4:5) = getScore(texture_match_results(:,2:7), submitted(:,4:5));
 end
 
 % Load clustering data for third step
@@ -179,5 +177,5 @@ end
 
 for i=1:n_users
     cluster = clusters{i};
-    scores(i,4) = getRandIndex(sys_c, cluster(:,2));
+    scores(i,6) = getRandIndex(sys_c, cluster(:,2));
 end

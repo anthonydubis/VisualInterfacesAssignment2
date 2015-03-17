@@ -11,6 +11,9 @@ results = a 2D matrix of size (# of images x 7)
     similar to third most similar
     - The last three images are those that are least similar, from third
     least similar to most least similar
+
+Reference https://www.mathworks.com/matlabcentral/newsreader/view_thread/
+248731 for sorting by a particular column. 
 %}
 
 n = size(comps,1);
