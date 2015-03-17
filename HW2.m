@@ -147,11 +147,11 @@ surveys{3} = csvread('data/SurveyThree.csv');
 surveys{4} = csvread('data/SurveyFour.csv');
 
 % Print images
-if print_user_input
-    for i=3:3
-        printResultsWithImages(surveys{i}, rgbs);
-    end
-end
+% if print_user_input
+%     for i=1:n_users
+%         printResultsWithImages(surveys{i}, rgbs);
+%     end
+% end
 
 % Get survey scores
 for i=1:n_users
@@ -166,6 +166,16 @@ clusters{1} = csvread('data/ClusterOne.csv');
 clusters{2} = csvread('data/ClusterTwo.csv');
 clusters{3} = csvread('data/ClusterThree.csv');
 clusters{4} = csvread('data/ClusterFour.csv');
+
+if print_user_input
+    for i=4:4
+        cluster = clusters{i}(:,2);
+        for j=1:n_clusters
+            mat = vec2mat(find(cluster == j), 7);
+            printResultsWithImages(mat, rgbs);
+        end
+    end
+end
 
 for i=1:n_users
     cluster = clusters{i};
